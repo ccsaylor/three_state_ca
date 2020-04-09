@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from numpy import array_equal
 
 def lookup_table(rule_number):
-    '''
+    """
     Returns a dictionary which maps ECA neighborhoods to output values. 
     Uses Wolfram rule number convention.
     
@@ -18,7 +18,7 @@ def lookup_table(rule_number):
     lookup_table: dict
         Lookup table dictionary that maps neighborhood tuples to their output according to the 
         ECA local evolution rule (i.e. the lookup table), as specified by the rule number. 
-    '''
+    """
     if not isinstance(rule_number, int) or rule_number < 0 or rule_number > 19682:
         raise ValueError("rule_number must be an int between 0 and 19682, inclusive")
     neighborhoods = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)]
@@ -37,7 +37,7 @@ def lookup_table(rule_number):
     return dict(zip(neighborhoods, map(int, reversed(in_ternary)))) # use map so that outputs are ints, not strings
 
 def unit_seed(margin_length):
-    '''
+    """
     Returns a list of a single '1' bounded by margin_length number of '0's 
     on either side. 
     
@@ -50,14 +50,14 @@ def unit_seed(margin_length):
     -------
     out: list
         [0,]*margin_length + [1,] + [0,]*margin_length
-    '''
+    """
     if not isinstance(margin_length, int) or margin_length < 0:
         raise ValueError("margin_length must be a postive int")
     
     return [0,]* margin_length + [1,] + [0,]*margin_length
 
 def random_string(length):
-    '''
+    """
     Returns a list of 0s, 1s and 2s
     
     Parameters
@@ -68,13 +68,13 @@ def random_string(length):
     Returns
     -------
     out: list
-    '''
+    """
     initial_condition = [random.randint(0,2) for _ in range(length)]
 
     return initial_condition
 
 def spacetime_field(rule_number, initial_condition, time_steps):
-    '''
+    """
     Returns a spacetime field array using the given rule number on the 
     given initial condition for the given number of time steps.
     
@@ -88,7 +88,7 @@ def spacetime_field(rule_number, initial_condition, time_steps):
         should be ints. 
     time_steps: int
         Positive integer specifying the number of time steps for evolving the ECA. 
-    '''
+    """
     if time_steps < 0:
         raise ValueError("time_steps must be a non-negative integer")
     # try converting time_steps to int and raise a custom error if this can't be done
@@ -124,8 +124,9 @@ def spacetime_field(rule_number, initial_condition, time_steps):
     
     return spacetime_field
 
-def spacetime_diagram(spacetime_field, size=12, colors=plt.cm.Greys):
-    '''
+def spacetime_diagram(
+        spacetime_field, size=12, colors=plt.cm.Greys):
+    """
     Produces a simple spacetime diagram image using matplotlib imshow with 'nearest' interpolation.
     
    Parameters
@@ -139,7 +140,7 @@ def spacetime_diagram(spacetime_field, size=12, colors=plt.cm.Greys):
     colors: matplotlib colormap, optional (default=plt.cm.Greys)
         See https://matplotlib.org/tutorials/colors/colormaps.html for colormap choices.
         A colormap 'cmap' is called as: colors=plt.cm.cmap
-    '''
+    """
     plt.figure(figsize=(size,size))
     plt.imshow(spacetime_field, cmap=colors, interpolation='nearest')
     plt.show()
@@ -188,12 +189,13 @@ def test_spacetime22():
     "time step 2 is incorrect"
     print('both time steps give correct output') # remove if using testing framework like nose
 
+    
 class ECA(object):
-    '''
+    """
     Elementary cellular automata simulator.
-    '''
+    """
     def __init__(self, rule_number, initial_condition):
-        '''
+        """
         Initializes the simulator for the given rule number and initial condition.
         
         Parameters
@@ -215,7 +217,7 @@ class ECA(object):
             2D array (list of lists) of the spacetime field created by the simulator.
         current_configuration: array_like
             List of the spatial configuration of the ECA at the current time
-        '''
+        """
         # we will see a cleaner and more efficient way to do the following when we introduce numpy
         for i in initial_condition:
             if i not in [0,1,2]:
@@ -228,14 +230,14 @@ class ECA(object):
         self._length = len(initial_condition)
 
     def evolve(self, time_steps):
-        '''
+        """
         Evolves the current configuration of the ECA for the given number of time steps.
         
         Parameters
         ----------
         time_steps: int
             Positive integer specifying the number of time steps for evolving the ECA.  
-        '''
+        """
         if time_steps < 0:
             raise ValueError("time_steps must be a non-negative integer")
         # try converting time_steps to int and raise a custom error if this can't be done
