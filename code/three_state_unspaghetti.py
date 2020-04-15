@@ -1,5 +1,7 @@
 import random
+
 from matplotlib import pyplot as plt
+
 from numpy import array_equal
 
 def lookup_table(rule_number):
@@ -19,22 +21,26 @@ def lookup_table(rule_number):
         Lookup table dictionary that maps neighborhood tuples to their output according to the 
         ECA local evolution rule (i.e. the lookup table), as specified by the rule number. 
     """
+    
     if not isinstance(rule_number, int) or rule_number < 0 or rule_number > 19682:
         raise ValueError("rule_number must be an int between 0 and 19682, inclusive")
+        
     neighborhoods = [(0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)]
     n = rule_number
     nums = []
+    
     while n:
         n, r = divmod(n, 3)
         nums.append(str(r))
+        
     in_ternary = ''.join(reversed(nums))
     ternary_length = len(in_ternary)
+    
     if ternary_length != 9:
         padding = 9 - ternary_length
         in_ternary = '0'*padding + in_ternary
 
-    
-    return dict(zip(neighborhoods, map(int, reversed(in_ternary)))) # use map so that outputs are ints, not strings
+    return dict(zip(neighborhoods, map(int, reversed(in_ternary))))
 
 def unit_seed(margin_length):
     """
@@ -51,6 +57,7 @@ def unit_seed(margin_length):
     out: list
         [0,]*margin_length + [1,] + [0,]*margin_length
     """
+    
     if not isinstance(margin_length, int) or margin_length < 0:
         raise ValueError("margin_length must be a postive int")
     
@@ -89,11 +96,14 @@ def spacetime_field(rule_number, initial_condition, time_steps):
     time_steps: int
         Positive integer specifying the number of time steps for evolving the ECA. 
     """
+    
     if time_steps < 0:
         raise ValueError("time_steps must be a non-negative integer")
+        
     # try converting time_steps to int and raise a custom error if this can't be done
     try:
         time_steps = int(time_steps)
+        
     except ValueError:
         raise ValueError("time_steps must be a non-negative integer")
         
@@ -110,8 +120,10 @@ def spacetime_field(rule_number, initial_condition, time_steps):
     current_configuration = initial_condition.copy()
 
     # apply the lookup table to evolve the CA for the given number of time steps
+    
     for t in range(time_steps):
         new_configuration = []
+        
         for i in range(length):
 
             neighborhood = (current_configuration[(i-1)%length], 
@@ -148,25 +160,31 @@ def spacetime_diagram(
 def test_lookup_table255():
     lt = lookup_table(255)
     expected_outputs = [0, 1, 1, 0, 0, 1, 0, 0, 0] # outputs in lexicographical order
+    
     for neighborhood, expected_out in zip(neighborhoods, expected_outputs):
         assert lt[neighborhood] == expected_out,\
         "neighborhood {} gives wrong output!".format(neighborhood)
+        
     print("all outputs look good!") # remove if using testing framework like nose
 
 def test_lookup_table9841():
     lt = lookup_table(9841)
     expected_outputs = [1, 1, 1, 1, 1, 1, 1, 1, 1] # outputs in lexicographical order
+    
     for neighborhood, expected_out in zip(neighborhoods, expected_outputs):
         assert lt[neighborhood] == expected_out,\
         "neighborhood {} gives wrong output!".format(neighborhood)
+        
     print("all outputs look good!") # remove if using testing framework like nose
 
 def test_lookup_table19682():
     lt = lookup_table(19682)
     expected_outputs = [2, 2, 2, 2, 2, 2, 2, 2, 2] # outputs in lexicographical order
+    
     for neighborhood, expected_out in zip(neighborhoods, expected_outputs):
         assert lt[neighborhood] == expected_out,\
         "neighborhood {} gives wrong output!".format(neighborhood)
+        
     print("all outputs look good!") # remove if using testing framework like nose
 
 def test_spacetime0():
@@ -176,6 +194,7 @@ def test_spacetime0():
     for time, observed_config in enumerate(obs_field[1:]): # skip the random initial condition
         assert array_equal(observed_config, expected_config), \
         "configuration at time {} not correct".format(time)
+        
     print('All configurations correct!') # remove if using testing framework like nose
 
 def test_spacetime22():
@@ -219,6 +238,7 @@ class ECA(object):
             List of the spatial configuration of the ECA at the current time
         """
         # we will see a cleaner and more efficient way to do the following when we introduce numpy
+        
         for i in initial_condition:
             if i not in [0,1,2]:
                 raise ValueError("initial condition must be a list of 0s, 1s and 2s")
@@ -238,16 +258,20 @@ class ECA(object):
         time_steps: int
             Positive integer specifying the number of time steps for evolving the ECA.  
         """
+        
         if time_steps < 0:
             raise ValueError("time_steps must be a non-negative integer")
+            
         # try converting time_steps to int and raise a custom error if this can't be done
         try:
             time_steps = int(time_steps)
+            
         except ValueError:
             raise ValueError("time_steps must be a non-negative integer")
 
         for _ in range(time_steps): # use underscore if the index will not be used
             new_configuration = []
+            
             for i in range(self._length):
 
                 neighborhood = (self.current_configuration[(i-1)%self._length], 
